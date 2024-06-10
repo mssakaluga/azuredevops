@@ -1,1 +1,1 @@
-
+sed -i '/{ig\.document\.streaming\.default\.largeContent}/,/\<\property\>/ s,\(</property>\),\1\n<property\ name="maxDistanceAllowedForInsuranceEligibility"\ value="${ig.insurance.eligibility.distanceInMiles}" \/>,1' /eClinicalWorks/prodapps/tomcat_UAT/webapps/ihub/WEB-INF/classes/resources/ihub-context.xml
