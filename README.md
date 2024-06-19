@@ -1,4 +1,4 @@
-	<servlet>
+hu	<servlet>
 		<servlet-name>ExecutionServiceInitializer</servlet-name>
 		<display-name>Execution Service Initializer</display-name>
 		<servlet-class>com.ecw.servlets.ExecutionServiceInitializer</servlet-class>
@@ -114,3 +114,6 @@ sed -e '/<\/servlet>/{:a;N;/<\/servlet>/!ba; \
         <servlet-class>com.ecw.servlets.CacheInitializer<\/servlet-class> \
         <load-on-startup>7<\/load-on-startup> \
     <\/servlet>' -e '}' before_after_file.xml > output_file.xml
+
+
+sed '/<\/servlet>$/a <vaibhav>' web.xml
