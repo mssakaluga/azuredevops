@@ -53,3 +53,18 @@ After:
 
 
 
+
+
+
+
+sed '/<\/servlet>/i \
+\
+\t<servlet> \
+\t\t<servlet-name>CacheInitializer<\/servlet-name> \
+\t\t<display-name>Cache Initializer<\/display-name> \
+\t\t<servlet-class>com.ecw.servlets.CacheInitializer<\/servlet-class> \
+\t\t<load-on-startup>7<\/load-on-startup> \
+\t<\/servlet>' before_after_file.xml
+
+
+
