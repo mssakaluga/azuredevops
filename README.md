@@ -86,3 +86,15 @@ sed '/<\/servlet>/a \
         <load-on-startup>7<\/load-on-startup> \
     <\/servlet>' before_after_file.xml > output_file.xml
 
+
+
+
+
+sed '$!N; /<\/servlet>/s/.*/&\n\
+\
+    <servlet> \
+        <servlet-name>CacheInitializer<\/servlet-name> \
+        <display-name>Cache Initializer<\/display-name> \
+        <servlet-class>com.ecw.servlets.CacheInitializer<\/servlet-class> \
+        <load-on-startup>7<\/load-on-startup> \
+    <\/servlet>/' before_after_file.xml > output_file.xml
