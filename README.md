@@ -98,3 +98,19 @@ sed '$!N; /<\/servlet>/s/.*/&\n\
         <servlet-class>com.ecw.servlets.CacheInitializer<\/servlet-class> \
         <load-on-startup>7<\/load-on-startup> \
     <\/servlet>/' before_after_file.xml > output_file.xml
+
+
+
+sed -e '/<\/servlet>/{:a;N;/<\/servlet>/!ba;r new_servlet_block.txt' -e '}' before_after_file.xml > output_file.xml
+
+
+
+
+sed -e '/<\/servlet>/{:a;N;/<\/servlet>/!ba; \
+\
+    <servlet> \
+        <servlet-name>CacheInitializer<\/servlet-name> \
+        <display-name>Cache Initializer<\/display-name> \
+        <servlet-class>com.ecw.servlets.CacheInitializer<\/servlet-class> \
+        <load-on-startup>7<\/load-on-startup> \
+    <\/servlet>' -e '}' before_after_file.xml > output_file.xml
