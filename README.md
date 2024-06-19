@@ -23,3 +23,12 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
+
+
+
+sed '/<filter-mapping>/i\
+<filter>\
+    <display-name>ApproveListController</display-name>\
+    <filter-name>ApproveListController</filter-name>\
+    <filter-class>approvelistendpoint.ApproveListController</filter-class>\
+</filter>' test.xml
