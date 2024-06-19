@@ -117,3 +117,9 @@ sed -e '/<\/servlet>/{:a;N;/<\/servlet>/!ba; \
 
 
 sed '/<\/servlet>$/a <vaibhav>' web.xml
+
+
+
+
+
+sed -i '/<load-on-startup>4<\/load-on-startup>/,/<\/servlet>/ s,\(</servlet>\),\1\n\t<servlet> \n\t\t\<servlet-name>CacheInitializer<\/servlet-name> \n\t\t\<display-name>Cache Initializer<\/display-name> \n\t\t\<servlet-class>com.ecw.servlets.CacheInitializer<\/servlet-class> \n\t\t\<load-on-startup>7<\/load-on-startup> \n\t\<\/servlet>,1' /eClinicalWorks/ecwinstall/detail/vaibhav/web.xml
