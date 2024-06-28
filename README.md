@@ -17,3 +17,28 @@ mkdir -p "$backup_path"
 cp -r "$source_dir"* "$backup_path"
 
 echo "Backup completed to $backup_path"
+
+================================
+
+if [ "#{patchfile}" == "misc_25687_ODA_V403_1719472889.tar.gz" ]
+then
+if [ -d #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/ ]
+then
+backup_path="#{backuploc}/#{tomcatfolder}_$(date +'%Y-%m-%d-%H%M%S')"
+mkdir -p "#{backup_path}/blazon"
+cp -arpf #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/* #{backup_path}/blazon/
+if [ -d #{backup_path}/blazon/ ]
+then
+rm -rf #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/
+fi
+fi
+if [ -d #{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/ ]
+then
+mkdir -p "#{backup_path}/oda"
+cp -arpf #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/* #{backup_path}/oda/
+if [ -d #{backup_path}/oda/ ]
+then
+rm -rf #{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/
+fi
+fi
+fi
