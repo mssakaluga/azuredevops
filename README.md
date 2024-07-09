@@ -1,3 +1,8 @@
+(free -g && ps -eo pid,ppid,%cpu,%mem,cmd --sort=-%mem | head -10 | column -t)
+
+
+
+
 #!/bin/bash
 
 # Source directory
