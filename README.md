@@ -1,6 +1,9 @@
 (free -g && ps -eo pid,ppid,%cpu,%mem,cmd --sort=-%mem | head -10 | column -t)
 
 
+(free -g && ps -eo pid,ppid,pcpu,pmem,cmd --sort=-pmem | head -10 | column -t)
+
+
 
 
 #!/bin/bash
