@@ -1,3 +1,7 @@
+escaped_old_string=$(printf '%s\n\' "$old_string" | sed -e 's/[\\/&]\/\\\&/g')
+escaped_new_string=$(printf '%s\n\' "$new_string" | sed -e 's/[\/&]\/\\&/g')
+
+
 (free -g && ps -eo pid,ppid,%cpu,%mem,cmd --sort=-%mem | head -10 | column -t)
 
 
