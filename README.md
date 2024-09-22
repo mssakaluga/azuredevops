@@ -1,92 +1,69 @@
-escaped_old_string=$(printf '%s\n\' "$old_string" | sed -e 's/[\\/&]\/\\\&/g')
-escaped_new_string=$(printf '%s\n\' "$new_string" | sed -e 's/[\/&]\/\\&/g')
+  <display-name>OHT_BUILD</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
 
 
-(free -g && ps -eo pid,ppid,%cpu,%mem,cmd --sort=-%mem | head -10 | column -t)
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>		
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:resources/oht-context.xml</param-value>
+	</context-param>
+    
+    
+	
+	<servlet>
+		<servlet-name>Jersey REST Service</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.ecw</param-value>
+		</init-param>
+
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Jersey REST Service</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+	<filter>
+    <display-name>ApproveListController</display-name>
+    <filter-name>ApproveListController</filter-name>
+    <filter-class>approvelistendpoint.ApproveListController</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ApproveListController</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+    
+</web-app>
 
 
-(free -g && ps -eo pid,ppid,pcpu,pmem,cmd --sort=-pmem | head -10 | column -t)
+I want to remove below part using sed command
 
+<servlet>
+		<servlet-name>Jersey REST Service</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.ecw</param-value>
+		</init-param>
 
+		<load-on-startup>2</load-on-startup>
+	</servlet>
 
-
-#!/bin/bash
-
-# Source directory
-source_dir="/Sagar/logs/"
-
-# Destination directory
-backup_dir="/backup/Sagar/logs/"
-
-# Create a timestamp for the backup folder name (format: YYYY-MM-DD-HHMMSS)
-timestamp=$(date +'%Y-%m-%d-%H%M%S')
-
-# Create the backup directory with the current timestamp
-backup_path="$backup_dir$timestamp"
-mkdir -p "$backup_path"
-
-# Copy all files from source directory to backup directory
-cp -r "$source_dir"* "$backup_path"
-
-echo "Backup completed to $backup_path"
-
-================================
-
-if [ "#{patchfile}" == "misc_25687_ODA_V403_1719472889.tar.gz" ]
-then
-if [ -d #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/ ]
-then
-backup_path="#{backuploc}/#{tomcatfolder}_$(date +'%Y-%m-%d-%H%M%S')"
-mkdir -p "#{backup_path}/blazon"
-cp -arpf #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/* #{backup_path}/blazon/
-if [ -d #{backup_path}/blazon/ ]
-then
-rm -rf #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/
-fi
-fi
-if [ -d #{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/ ]
-then
-mkdir -p "#{backup_path}/oda"
-cp -arpf #{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/* #{backup_path}/oda/
-if [ -d #{backup_path}/oda/ ]
-then
-rm -rf #{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/
-fi
-fi
-fi
-
-
-
-patchfile = "misc_25687_ODA_V403_1719472889.tar.gz"
-tomcat_install_loc = "/path/to/tomcat/installation"
-tomcatfolder = "your_tomcat_folder"
-backuploc = "/path/to/backup/location"
-
-# Define the bash script as a string
-bash_script = <<~BASH
-  if [ "#{patchfile}" == "misc_25687_ODA_V403_1719472889.tar.gz" ]; then
-    if [ -d "#{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/" ]; then
-      backup_path="#{backuploc}/#{tomcatfolder}_$(date +'%Y-%m-%d-%H%M%S')"
-      mkdir -p "#{backup_path}/blazon"
-      cp -arpf "#{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/"* "#{backup_path}/blazon/"
-      if [ -d "#{backup_path}/blazon/" ]; then
-        rm -rf "#{tomcat_install_loc}/#{tomcatfolder}/webapps/blazon/"
-      fi
-    fi
-    if [ -d "#{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/" ]; then
-      mkdir -p "#{backup_path}/oda"
-      cp -arpf "#{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/"* "#{backup_path}/oda/"
-      if [ -d "#{backup_path}/oda/" ]; then
-        rm -rf "#{tomcat_install_loc}/#{tomcatfolder}/webapps/oda/"
-      fi
-    fi
-  fi
-BASH
-
-# Execute the bash script within Ruby
-begin
-  result = %x{#{bash_script}}
-  puts result  # Print the result if needed
-rescue => e
-  puts "Error executing bash script: #{e.message}"
-end
+	<servlet-mapping>
+		<servlet-name>Jersey REST Service</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
