@@ -1,128 +1,74 @@
-Before file:
-<!--******************** PDQ Consumer Start ******************** -->
- 
-	<bean id="pdq_consumer_connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
-		p:userName="${activemq.pdq.consumer.username}" p:password="${activemq.pdq.consumer.password}" p:brokerURL="${activemq.pdq.consumer.brokerUrl}" />	
+Before:
 
-<!-- A POJO that implements the JMS message listener -->
-	<bean id="pdqMessageListener" class="com.ecw.ihub.activemq.PDQConsumer" scope="prototype">
-		<property name="ohtPassKey" value="${ihub.passKey}" />
-		<property name="resourceId" value="${audit.resourceId}" />
-		<property name="gson" ref="Gson" />
+<bean id="serverInfoLoader"
+		  class="com.ecw.ihub.commons.controller.ServerInfoLoader" init-method="init"
+		  destroy-method="shutdown" scope="singleton">
+		<property name="serverDetailsDao" ref="serverDetailsDao" />
+		<property name="loggingManager" ref="loggingManager" />
 	</bean>
 
-	<jms:listener-container container-type="default"
-		connection-factory="pdq_consumer_connectionFactory" acknowledge="auto"
-		concurrency="${activemq.pdq.minConsumers.maxConsumers}" cache="consumer">
-		<jms:listener destination="${activemq.pdq.consumer.queueName}"
-			ref="pdqMessageListener" />
-	</jms:listener-container> 
-	<!-- ******************** PDQ Consumer End ******************** -->
+	<bean id="appContextProvider" class="catalog.ApplicationContextProvider" scope="singleton">
+	</bean>
 
-	<bean id="GenericMessageProducer" class="com.ecw.ihub.activemq.GenericMessageProducer" scope="prototype" />
+	<util:properties id="velocityProperties">
+		<prop key="resource.loader">class</prop>
+		<prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+		</prop>
+		<prop key="runtime.log.logsystem.class">org.apache.velocity.runtime.log.SimpleLog4JLogSystem</prop>
+		<prop key="runtime.log.logsystem.log4j.category">velocity</prop>
+		<prop key="runtime.log.logsystem.log4j.logger">velocity</prop>
+	</util:properties>
 
-	<!-- ********************Audit Producer******************** -->
+	<bean id="velocityEngine" class="org.apache.velocity.app.VelocityEngine">
+		<constructor-arg ref="velocityProperties"/>
+	</bean>
 
-	<bean id="auditProducerTemplate" class="org.springframework.jms.core.JmsTemplate" p:connectionFactory-ref="audit_producer_connectionFactory"
-		p:defaultDestination-ref="destination_audit" />
+	<bean id="ceqCwDocumentTransactionLogsDAO" class="com.ecw.oht.dao.CeqCwDocumentQueryLogDAO" scope="prototype">
+		<property name="serverInfoLoader" ref="serverInfoLoader"/>
+	</bean>
+
+	<bean id="iheDocumentDAO" class="com.ecw.oht.dao.IheDocumentDAO" scope="prototype"/>
+		  
+</beans>
+
+After File:
+<bean id="serverInfoLoader"
+		  class="com.ecw.ihub.commons.controller.ServerInfoLoader" init-method="init"
+		  destroy-method="shutdown" scope="singleton">
+		<property name="serverDetailsDao" ref="serverDetailsDao" />
+		<property name="loggingManager" ref="loggingManager" />
+	</bean>
+
+	<bean id="appContextProvider" class="catalog.ApplicationContextProvider" scope="singleton">
+	</bean>
+
+	<util:properties id="velocityProperties">
+		<prop key="resource.loader">class</prop>
+		<prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+		</prop>
+		<prop key="runtime.log.logsystem.class">org.apache.velocity.runtime.log.SimpleLog4JLogSystem</prop>
+		<prop key="runtime.log.logsystem.log4j.category">velocity</prop>
+		<prop key="runtime.log.logsystem.log4j.logger">velocity</prop>
+	</util:properties>
+
+	<bean id="velocityEngine" class="org.apache.velocity.app.VelocityEngine">
+		<constructor-arg ref="velocityProperties"/>
+	</bean>
+
+	<bean id="ceqCwDocumentTransactionLogsDAO" class="com.ecw.oht.dao.CeqCwDocumentQueryLogDAO" scope="prototype">
+		<property name="serverInfoLoader" ref="serverInfoLoader"/>
+	</bean>
+
+	<bean id="iheDocumentDAO" class="com.ecw.oht.dao.IheDocumentDAO" scope="prototype"/>
+
+	<bean id="interopMilestoneConfigDao" class="com.ecw.ihub.dao.InteropMilestoneConfigDao" scope="prototype">
+	</bean>
 		
-	<bean id="audit_producer_connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
-		p:userName="${activemq.audit.producer.username}" p:password="${activemq.audit.producer.password}" p:brokerURL="${activemq.audit.producer.brokerUrl}" />		
-		
-	<bean id="destination_audit" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="${activemq.audit.producer.queueName}" />
+	<bean id="secFilterHelper" class="com.ecw.security.SecurityControlFilterHelper"></bean>
+	
+	<bean id="crossSite" class="com.ecw.security.SecurityControlWrapperFilter">
+		<property name="secFilterHelper" ref="secFilterHelper"/>
 	</bean>
-
-	<!-- ********************END Audit Producer******************** -->
-
-	<!--  ******************** JMS Configuration END ******************** -->
-
-	<bean id="SendCDA" class="com.ecw.ihub.source.SendCDA" scope="prototype"/>
 	
-	<bean id="Gson" class="com.google.gson.Gson" scope="prototype" />
-	
-	<bean id="AuditBean" class="com.ecw.ihub.commons.beans.AuditBean" scope="prototype" />
-	
-	<bean id="PNRTransactionLogDAO" class="com.ecw.oht.dao.PnRTransactionLogDAO" scope="prototype" />
-	
-	<bean id="String" class="java.lang.String" scope="prototype" />
-
-	<!-- ********************IG Error Notification******************** -->
-	<bean id="errorNotifyProducerTemplate" class="org.springframework.jms.core.JmsTemplate"
-		  p:connectionFactory-ref="errornotify_producer_connectionFactory"
-		  p:defaultDestination-ref="destination_ihub"/>
-
-	<bean id="errornotify_producer_connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
-		  p:userName="${activemq.errornotify.producer.username}" p:password="${activemq.errornotify.producer.password}"
-		  p:brokerURL="${activemq.errornotify.producer.brokerUrl}"/>
-
-	<bean id="destination_ihub" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="${activemq.errornotify.producer.queueName}"/>
-	</bean>
-
-	<bean id="igErrorNotificationProducer" class="com.ecw.ihub.activemq.IgErrorNotificationProducer" scope="prototype">
-		<constructor-arg name="errorNotifyQueueTemplate" ref="errorNotifyProducerTemplate" />
-		<constructor-arg name="ihubKey" value="${ihub.passKey}"/>
-		<constructor-arg name="gson" ref="Gson"/>
-		<constructor-arg name="messageProducer" ref="GenericMessageProducer"/>
-	</bean>
-
-After file:
-
-<!--******************** PDQ Consumer Start ******************** -->
- 
-	<bean id="pdq_consumer_connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
-		p:userName="${activemq.pdq.consumer.username}" p:password="${activemq.pdq.consumer.password}" p:brokerURL="${activemq.pdq.consumer.brokerUrl}" />	
-
-<!-- A POJO that implements the JMS message listener -->
-	<bean id="pdqMessageListener" class="com.ecw.ihub.activemq.PDQConsumer" scope="prototype">
-		<property name="ohtPassKey" value="${ihub.passKey}" />
-		<property name="resourceId" value="${audit.resourceId}" />
-		<property name="gson" ref="Gson" />
-	</bean>
-
-	<jms:listener-container container-type="default"
-		connection-factory="pdq_consumer_connectionFactory" acknowledge="auto"
-		concurrency="${activemq.pdq.minConsumers.maxConsumers}" cache="consumer">
-		<jms:listener destination="${activemq.pdq.consumer.queueName}"
-			ref="pdqMessageListener" />
-	</jms:listener-container> 
-	<!-- ******************** PDQ Consumer End ******************** -->
-
-	<bean id="GenericMessageProducer" class="com.ecw.ihub.activemq.GenericMessageProducer" scope="prototype" />
-
-	<!-- ********************Audit Producer******************** -->
- 
-	<!-- ********************END Audit Producer******************** -->
-
-	<!--  ******************** JMS Configuration END ******************** -->
-
-	<bean id="SendCDA" class="com.ecw.ihub.source.SendCDA" scope="prototype"/>
-	
-	<bean id="Gson" class="com.google.gson.Gson" scope="prototype" />
-	
-	<bean id="AuditBean" class="com.ecw.ihub.commons.beans.AuditBean" scope="prototype" />
-	
-	<bean id="PNRTransactionLogDAO" class="com.ecw.oht.dao.PnRTransactionLogDAO" scope="prototype" />
-	
-	<bean id="String" class="java.lang.String" scope="prototype" />
-
-	<!-- ********************IG Error Notification******************** -->
-	<bean id="errorNotifyProducerTemplate" class="org.springframework.jms.core.JmsTemplate"
-		  p:connectionFactory-ref="errornotify_producer_connectionFactory"
-		  p:defaultDestination-ref="destination_ihub"/>
-
-	<bean id="errornotify_producer_connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"
-		  p:userName="${activemq.errornotify.producer.username}" p:password="${activemq.errornotify.producer.password}"
-		  p:brokerURL="${activemq.errornotify.producer.brokerUrl}"/>
-
-	<bean id="destination_ihub" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="${activemq.errornotify.producer.queueName}"/>
-	</bean>
-
-	<bean id="igErrorNotificationProducer" class="com.ecw.ihub.activemq.IgErrorNotificationProducer" scope="prototype">
-		<constructor-arg name="errorNotifyQueueTemplate" ref="errorNotifyProducerTemplate" />
-		<constructor-arg name="ihubKey" value="${ihub.passKey}"/>
-		<constructor-arg name="gson" ref="Gson"/>
-		<constructor-arg name="messageProducer" ref="GenericMessageProducer"/>
-	</bean>
+	<bean id="logRequestInterceptorFilterMapping" class="com.ecw.security.LogRequestInterceptorFilterMapping"></bean>
+</beans>
